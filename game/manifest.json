@@ -1,0 +1,33 @@
+{
+  "name": "TapFlow",
+  "short_name": "TapFlow",
+  "description": "A hyper-casual one-tap endless runner. Tap to switch lanes, dodge obstacles, collect gems!",
+  "start_url": "/game/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0F1C",
+  "theme_color": "#00D4FF",
+  "categories": ["games", "entertainment"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/assets/tapflow-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/tapflow-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/tapflow-logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "splash_pages": null
+}

@@ -1,0 +1,139 @@
+/* ============================================
+   TapFlow Design System — CSS Custom Properties
+   Drop this into :root and use throughout the game
+   ============================================ */
+
+:root {
+  /* ---- Background ---- */
+  --bg-primary: #0B0F1C;
+  --bg-secondary: #131A2E;
+  --bg-surface: #1A2340;
+  --gradient-bg: linear-gradient(180deg, #0B0F1C 0%, #131A2E 50%, #0B0F1C 100%);
+
+  /* ---- Player (the orb) ---- */
+  --player-color: #00D4FF;
+  --player-glow: rgba(0, 212, 255, 0.4);
+  --player-glow-strong: rgba(0, 212, 255, 0.7);
+  --gradient-player: radial-gradient(circle, #00D4FF 0%, #0099CC 100%);
+
+  /* ---- Obstacles (danger) ---- */
+  --obstacle-color: #FF4757;
+  --obstacle-alt: #FF6B81;
+  --obstacle-glow: rgba(255, 71, 87, 0.4);
+  --gradient-obstacle: linear-gradient(135deg, #FF4757 0%, #FF6B81 100%);
+
+  /* ---- Power-ups & Accents ---- */
+  --accent-purple: #7C5CFC;
+  --accent-purple-light: #A78BFA;
+  --gradient-powerup: linear-gradient(135deg, #7C5CFC 0%, #A78BFA 100%);
+
+  /* ---- Feedback Colors ---- */
+  --success: #2ED573;
+  --warning: #FFA502;
+  --danger: #FF4757;
+
+  /* ---- Text ---- */
+  --text-primary: #FFFFFF;
+  --text-secondary: #8892B0;
+  --text-muted: #4A5568;
+
+  /* ---- UI Components ---- */
+  --ui-bg: rgba(19, 26, 46, 0.9);
+  --ui-border: rgba(255, 255, 255, 0.08);
+  --ui-overlay: rgba(11, 15, 28, 0.85);
+  --gradient-ui-panel: linear-gradient(180deg,
+    rgba(26, 35, 64, 0.95) 0%,
+    rgba(19, 26, 46, 0.95) 100%
+  );
+
+  /* ---- Spacing (8px grid) ---- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* ---- Border Radius ---- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ---- Animation ---- */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* ---- Shadows / Glows ---- */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --glow-player: 0 0 20px rgba(0, 212, 255, 0.4),
+                 0 0 60px rgba(0, 212, 255, 0.15);
+  --glow-obstacle: 0 0 15px rgba(255, 71, 87, 0.3);
+  --glow-powerup: 0 0 15px rgba(124, 92, 252, 0.3);
+}
+
+/* ---- Utility Classes ---- */
+.glass-panel {
+  background: var(--gradient-ui-panel);
+  border: 1px solid var(--ui-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+}
+
+.orb-player {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-player);
+  box-shadow: var(--glow-player);
+}
+
+.orb-obstacle-triangle {
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 28px solid var(--obstacle-color);
+  filter: drop-shadow(var(--glow-obstacle));
+}
+
+.orb-obstacle-diamond {
+  width: 20px;
+  height: 20px;
+  background: var(--gradient-obstacle);
+  transform: rotate(45deg);
+  box-shadow: var(--glow-obstacle);
+}
+
+.btn-primary {
+  background: var(--gradient-player);
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-xl);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-smooth),
+              box-shadow var(--duration-fast) var(--ease-smooth);
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+.score-display {
+  font-family: 'Courier New', monospace;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--player-color);
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+  text-align: center;
+}
