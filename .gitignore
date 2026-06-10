@@ -15,3 +15,11 @@ Thumbs.db
 # Python http server cache
 __pycache__/
 *.pyc
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Capacitor build artifacts
+capacitor-cordova-ios-plugins/
+capacitor-cordova-android-plugins/
