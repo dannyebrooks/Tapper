@@ -313,8 +313,10 @@
     <button id="restartBtn">↻ PLAY AGAIN</button>
     <button id="watchAdBtn" style="display:none; margin-top: var(--space-sm); background: linear-gradient(135deg, var(--warning) 0%, #e09000 100%); border: none; border-radius: var(--radius-lg); color: var(--text-primary); font-size: clamp(14px,4vw,20px); font-weight: 700; padding: var(--space-sm) var(--space-lg); cursor: pointer; box-shadow: var(--glow-powerup); transition: transform var(--duration-fast) var(--ease-smooth); touch-action: manipulation; -webkit-tap-highlight-color: transparent;">▶ WATCH AD TO CONTINUE</button>
   </div>
+  <div id="statsFooter" style="margin-top:var(--space-md);color:var(--text-muted);font-size:clamp(11px,2.8vw,14px);text-align:center;font-weight:400;letter-spacing:0.3px;"></div>
 </div>
 
+<script src="/game/analytics.js"></script>
 <script src="/game/sound-manager.js"></script>
 <script src="/game/ad-manager.js"></script>
 <script>
@@ -336,6 +338,7 @@ const newBestEl     = document.getElementById('newBest');
 const gameOverEl    = document.getElementById('gameOver');
 const restartBtn    = document.getElementById('restartBtn');
 const watchAdBtn    = document.getElementById('watchAdBtn');
+const statsFooter   = document.getElementById('statsFooter');
 const instrEl       = document.getElementById('instructions');
 const splashEl      = document.getElementById('splash');
 const splashLogo    = document.getElementById('splash-logo');
@@ -546,6 +549,9 @@ function resetGame() {
 
   spawnInitialObstacles();
 
+  // Track analytics
+  trackGameStart();
+
   // Try to show interstitial ad between sessions (non-blocking)
   showInterstitial();
 }
@@ -698,6 +704,10 @@ function gameOver() {
   finalHiEl.textContent = 'BEST ' + game.hiScore;
   hiEl.textContent = 'BEST ' + game.hiScore;
   newBestEl.classList.toggle('show', isNewBest);
+
+  // Track analytics
+  trackGameOver(game.score, currentSessionGems || 0);
+  statsFooter.textContent = getStatsString();
 
   // Save state for rewarded-video continue (one chance per game over)
   if (!adContinueUsed && adsReady) {
