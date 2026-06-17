@@ -13,8 +13,8 @@ const AD_UNIT_IDS = {
     interstitial: 'ca-app-pub-3940256099942544/1033173712', // Test interstitial
   },
   ios: {
-    rewarded:   'ca-app-pub-3940256099942544/1712485313',  // Test rewarded
-    interstitial: 'ca-app-pub-3940256099942544/4411468910', // Test interstitial
+    rewarded:   'ca-app-pub-3518364491218083~7332104800',  // Test rewarded
+    interstitial: 'ca-app-pub-3518364491218083~7332104800', // Test interstitial
   },
 };
 
