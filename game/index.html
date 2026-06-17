@@ -311,9 +311,11 @@
     <div class="new-best" id="newBest">★ NEW BEST! ★</div>
     <div class="final-hi" id="finalHi">BEST 0</div>
     <button id="restartBtn">↻ PLAY AGAIN</button>
+    <button id="watchAdBtn" style="display:none; margin-top: var(--space-sm); background: linear-gradient(135deg, var(--warning) 0%, #e09000 100%); border: none; border-radius: var(--radius-lg); color: var(--text-primary); font-size: clamp(14px,4vw,20px); font-weight: 700; padding: var(--space-sm) var(--space-lg); cursor: pointer; box-shadow: var(--glow-powerup); transition: transform var(--duration-fast) var(--ease-smooth); touch-action: manipulation; -webkit-tap-highlight-color: transparent;">▶ WATCH AD TO CONTINUE</button>
   </div>
 </div>
 
+<script src="/game/ad-manager.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════
    TapFlow — Hyper-casual endless runner
@@ -332,6 +334,7 @@ const finalHiEl     = document.getElementById('finalHi');
 const newBestEl     = document.getElementById('newBest');
 const gameOverEl    = document.getElementById('gameOver');
 const restartBtn    = document.getElementById('restartBtn');
+const watchAdBtn    = document.getElementById('watchAdBtn');
 const instrEl       = document.getElementById('instructions');
 const splashEl      = document.getElementById('splash');
 const splashLogo    = document.getElementById('splash-logo');
@@ -425,6 +428,8 @@ let gems      = [];
 let particles = [];
 let trail     = [];
 let screenShake = 0;
+let adContinueState = null;   // saved state for rewarded-video continue
+let adContinueUsed = false;   // one continue per game over
 
 // ─── Utility ────────────────────────────────────────────────
 const rand = (min, max) => Math.random() * (max - min) + min;
@@ -526,6 +531,9 @@ function resetGame() {
   particles     = [];
   trail         = [];
   screenShake   = 0;
+  adContinueState = null;
+  adContinueUsed = false;
+  watchAdBtn.style.display = 'none';
 
   gameOverEl.classList.remove('show');
 
@@ -533,6 +541,9 @@ function resetGame() {
   setTimeout(() => instrEl.classList.add('hidden'), 3000);
 
   spawnInitialObstacles();
+
+  // Try to show interstitial ad between sessions (non-blocking)
+  showInterstitial();
 }
 
 // ─── Input ──────────────────────────────────────────────────
@@ -573,6 +584,10 @@ document.addEventListener('keydown', (e) => {
 // Restart
 restartBtn.addEventListener('click', resetGame);
 restartBtn.addEventListener('touchend', (e) => { e.preventDefault(); resetGame(); });
+
+// Watch Ad to Continue
+watchAdBtn.addEventListener('click', handleAdContinue);
+watchAdBtn.addEventListener('touchend', (e) => { e.preventDefault(); handleAdContinue(); });
 
 // ─── Update ─────────────────────────────────────────────────
 function update() {
@@ -668,7 +683,58 @@ function gameOver() {
   hiEl.textContent = 'BEST ' + game.hiScore;
   newBestEl.classList.toggle('show', isNewBest);
 
+  // Save state for rewarded-video continue (one chance per game over)
+  if (!adContinueUsed && adsReady) {
+    adContinueState = {
+      score: game.score,
+      speed: game.speed,
+      obstacles: obstacles.map(o => ({ ...o })),
+      gems: gems.map(g => ({ ...g })),
+    };
+    watchAdBtn.style.display = 'inline-block';
+  } else {
+    adContinueState = null;
+    watchAdBtn.style.display = 'none';
+  }
+
   setTimeout(() => gameOverEl.classList.add('show'), 400);
+}
+
+// ─── Continue after rewarded video ─────────────────────────
+function continueGame() {
+  if (!adContinueState) return;
+  adContinueUsed = true;
+  watchAdBtn.style.display = 'none';
+
+  // Restore saved state
+  game.running = true;
+  game.over    = false;
+  game.score   = adContinueState.score;
+  game.speed   = adContinueState.speed;
+  obstacles    = adContinueState.obstacles;
+  gems         = adContinueState.gems;
+
+  adContinueState = null;
+
+  gameOverEl.classList.remove('show');
+  scoreEl.textContent = game.score;
+  instrEl.classList.add('hidden');
+}
+
+// ─── Ad continue handler (triggered by watch ad button) ────
+async function handleAdContinue() {
+  watchAdBtn.disabled = true;
+  watchAdBtn.textContent = '⏳ LOADING AD...';
+
+  const result = await showRewardedVideo();
+
+  if (result.rewarded) {
+    continueGame();
+  } else {
+    // Ad not watched or failed — revert to normal game over
+    watchAdBtn.textContent = '▶ WATCH AD TO CONTINUE';
+  }
+  watchAdBtn.disabled = false;
 }
 
 // ─── Render ─────────────────────────────────────────────────
@@ -995,6 +1061,11 @@ splashLogo.src = '/assets/tapflow-logo.png';
 // Load assets, then start
 loadAssets(() => {
   console.log('✅ TapFlow assets loaded');
+});
+
+// Initialize ads (non-blocking — works in native app, graceful fallback in browser)
+initAds().then((ready) => {
+  if (ready) console.log('✅ Ads ready for monetization');
 });
 
 // Start game loop (renders background even on splash)
